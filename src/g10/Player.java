@@ -55,7 +55,7 @@ public class Player implements BattleshipsPlayer {
                     int y = rnd.nextInt(sizeY);
                     pos = new Position(x, y);
                 }
-            } while (collision(pos, s, vertical));
+            } while (collision(pos, s, vertical, myShips));
             for (int j = 0; j < s.size(); j++) {
                 if (vertical) {
                     myShips[pos.x][pos.y + j] = true;
@@ -66,8 +66,19 @@ public class Player implements BattleshipsPlayer {
             board.placeShip(pos, s, vertical);
         }
     }
-    
-    private boolean collision(Position pos, Ship s, boolean direction) {
+
+    private boolean collision(Position pos, Ship s, boolean vertical, boolean[][] myShips) {
+        for (int i = 0; i < s.size(); i++) {
+            if (vertical) {
+                if (myShips[pos.x][pos.y + i]) {
+                    return true;
+                }
+            } else {
+                if (myShips[pos.x + i][pos.y]) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

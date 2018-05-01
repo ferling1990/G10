@@ -17,7 +17,7 @@ public class G10 implements PlayerFactory<BattleshipsPlayer> {
 
     @Override
     public String getName() {
-        return ""; //insert cool name
+        return "tuff-gai"; //insert cool name
     }
 
     @Override
