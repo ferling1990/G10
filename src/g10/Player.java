@@ -15,6 +15,7 @@ public class Player implements BattleshipsPlayer {
     private Board myBoard;
 
     public Player() {
+        //test
     }
 
     /**
