@@ -5,6 +5,7 @@ import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Board;
 import battleship.interfaces.Ship;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Player implements BattleshipsPlayer {
@@ -13,9 +14,17 @@ public class Player implements BattleshipsPlayer {
     private int sizeX;
     private int sizeY;
     private Board myBoard;
+    private boolean seeking;
+    private ArrayList<Position> possibleShots;
+    private Position firstHit, lastHit, lastShot;
+    private shotDirectionEnum directionEnum;
 
     public Player() {
-        //testING
+        seeking = true;
+        possibleShots = new ArrayList();
+        lastShot = null;
+        lastHit = null;
+        directionEnum = shotDirectionEnum.unknown;
     }
 
     /**
@@ -82,6 +91,14 @@ public class Player implements BattleshipsPlayer {
         return false;
     }
 
+    private void createPossibleShotList() {
+        for (int y = 0; y < sizeY; y++) {
+            for (int x = 0; x < sizeX; x++) {
+                possibleShots.add(new Position(x, y));
+            }
+        }
+    }
+
     /**
      * Called every time the enemy has fired a shot.
      *
@@ -107,9 +124,45 @@ public class Player implements BattleshipsPlayer {
      */
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
-        int x = rnd.nextInt(sizeX);
-        int y = rnd.nextInt(sizeY);
-        return new Position(x, y);
+        if (possibleShots.isEmpty()) {
+            createPossibleShotList();
+        }
+        if (seeking) {
+            int shot = rnd.nextInt(possibleShots.size());
+            lastShot = possibleShots.get(shot);
+            possibleShots.remove(shot);
+
+            //seekShot();
+        } else {
+            //killShot();
+            Position guess = new Position(lastHit.x + 1, lastHit.y);
+            Position guess2 = new Position(lastHit.x - 1, lastHit.y);
+            Position guess3 = new Position(lastHit.x, lastHit.y + 1);
+            Position guess4 = new Position(lastHit.x, lastHit.y - 1);
+            if (possibleShots.contains(guess) || directionEnum == shotDirectionEnum.right) {
+                lastShot = guess;
+                possibleShots.remove(guess);
+                directionEnum = shotDirectionEnum.right;
+            } else if (possibleShots.contains(guess2) || directionEnum == shotDirectionEnum.left) {
+                lastShot = guess2;
+                possibleShots.remove(guess2);
+                directionEnum = shotDirectionEnum.left;
+            } else if (possibleShots.contains(guess3) || directionEnum == shotDirectionEnum.up) {
+                lastShot = guess3;
+                possibleShots.remove(guess3);
+                directionEnum = shotDirectionEnum.up;
+            } else if (possibleShots.contains(guess4) || directionEnum == shotDirectionEnum.down) {
+                lastShot = guess4;
+                possibleShots.remove(guess4);
+                directionEnum = shotDirectionEnum.down;
+            } else {
+                seeking = true;
+                directionEnum = shotDirectionEnum.unknown;
+            }
+
+        }
+
+        return lastShot;
     }
 
     /**
@@ -124,7 +177,13 @@ public class Player implements BattleshipsPlayer {
      */
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
-        //Do nothing
+        if (hit) {
+            seeking = false;
+            lastHit = lastShot;
+        } else {
+        directionEnum = shotDirectionEnum.unknown;
+        }
+
     }
 
     /**
