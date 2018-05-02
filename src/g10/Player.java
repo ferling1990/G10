@@ -344,9 +344,9 @@ public class Player implements BattleshipsPlayer {
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
         shipsBeforeShot = enemyShips.getNumberOfShips();
-        if (possibleShots.isEmpty()) {
-            createPossibleShotList();
-        }
+//        if (possibleShots.isEmpty()) {
+//            createPossibleShotList();
+//        }
         if (seeking) {
             seekShot();
         } else {
@@ -356,13 +356,13 @@ public class Player implements BattleshipsPlayer {
     }
 
     private void seekShot() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             int shot = rnd.nextInt(possibleShots.size());
             if (hasNoNeighboors(possibleShots.get(shot))) {
                 lastShot = possibleShots.get(shot);
                 possibleShots.remove(shot);
                 return;
-            } 
+            }
         }
         randomShot();
     }
@@ -411,6 +411,11 @@ public class Player implements BattleshipsPlayer {
             lastShot = guess2;
             possibleShots.remove(guess2);
             directionEnum = shotDirectionEnum.left;
+        } else if (possibleShots.contains(guess5)) {
+            lastShot = guess5;
+            possibleShots.remove(guess5);
+            directionEnum = shotDirectionEnum.left;
+            //firstHit = null;
         } else if (possibleShots.contains(guess3)) {
             lastShot = guess3;
             possibleShots.remove(guess3);
@@ -419,11 +424,6 @@ public class Player implements BattleshipsPlayer {
             lastShot = guess4;
             possibleShots.remove(guess4);
             directionEnum = shotDirectionEnum.down;
-        } else if (possibleShots.contains(guess5)) {
-            lastShot = guess5;
-            possibleShots.remove(guess5);
-            directionEnum = shotDirectionEnum.left;
-            //firstHit = null;
         } else if (possibleShots.contains(guess6)) {
             lastShot = guess6;
             possibleShots.remove(guess6);
@@ -431,6 +431,7 @@ public class Player implements BattleshipsPlayer {
             //firstHit = null;
         } else {
             //seeking = true;
+            randomShot();
             directionEnum = shotDirectionEnum.unknown;
         }
     }
@@ -461,6 +462,25 @@ public class Player implements BattleshipsPlayer {
 
     }
 
+    private int[] checkEnemyFleet(Fleet enemyShips) {
+        int[] shipSizes = {0, 0, 0, 0};
+        for (int i = 0; i < enemyShips.getNumberOfShips(); i++) {
+            if (enemyShips.getShip(i).size() == 2) {
+                shipSizes[0]++;
+            }
+            if (enemyShips.getShip(i).size() == 3) {
+                shipSizes[1]++;
+            }
+            if (enemyShips.getShip(i).size() == 4) {
+                shipSizes[2]++;
+            }
+            if (enemyShips.getShip(i).size() == 5) {
+                shipSizes[3]++;
+            }
+        }
+        return shipSizes;
+    }
+
     /**
      * Called in the beginning of each match to inform about the number of
      * rounds being played.
@@ -479,7 +499,8 @@ public class Player implements BattleshipsPlayer {
      */
     @Override
     public void startRound(int round) {
-
+        possibleShots.clear();
+        createPossibleShotList();
     }
 
     /**
