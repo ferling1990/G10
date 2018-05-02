@@ -136,66 +136,67 @@ public class Player implements BattleshipsPlayer {
 
             //seekShot();
         } else {
-            //killShot();
-            if (firstHit == null) {
-                firstHit = lastHit;
-            }
-            Position guess = new Position(lastHit.x + 1, lastHit.y);
-            Position guess2 = new Position(lastHit.x - 1, lastHit.y);
-            Position guess3 = new Position(lastHit.x, lastHit.y + 1);
-            Position guess4 = new Position(lastHit.x, lastHit.y - 1);
-            Position guess5 = new Position(firstHit.x - 1, firstHit.y);
-            Position guess6 = new Position(firstHit.x, firstHit.y - 1);
-            if (possibleShots.contains(guess) && directionEnum == shotDirectionEnum.right) {
-                lastShot = guess;
-                possibleShots.remove(guess);
-                directionEnum = shotDirectionEnum.right;
-            } else if (possibleShots.contains(guess2) && directionEnum == shotDirectionEnum.left) {
-                lastShot = guess2;
-                possibleShots.remove(guess2);
-                directionEnum = shotDirectionEnum.left;
-            } else if (possibleShots.contains(guess3) && directionEnum == shotDirectionEnum.up) {
-                lastShot = guess3;
-                possibleShots.remove(guess3);
-                directionEnum = shotDirectionEnum.up;
-            } else if (possibleShots.contains(guess4) && directionEnum == shotDirectionEnum.down) {
-                lastShot = guess4;
-                possibleShots.remove(guess4);
-                directionEnum = shotDirectionEnum.down;
-            } else if (possibleShots.contains(guess) || directionEnum == shotDirectionEnum.right) {
-                lastShot = guess;
-                possibleShots.remove(guess);
-                directionEnum = shotDirectionEnum.right;
-            } else if (possibleShots.contains(guess2) || directionEnum == shotDirectionEnum.left) {
-                lastShot = guess2;
-                possibleShots.remove(guess2);
-                directionEnum = shotDirectionEnum.left;
-            } else if (possibleShots.contains(guess3) || directionEnum == shotDirectionEnum.up) {
-                lastShot = guess3;
-                possibleShots.remove(guess3);
-                directionEnum = shotDirectionEnum.up;
-            } else if (possibleShots.contains(guess4) || directionEnum == shotDirectionEnum.down) {
-                lastShot = guess4;
-                possibleShots.remove(guess4);
-                directionEnum = shotDirectionEnum.down;
-            } else if (possibleShots.contains(guess5)) {
-                lastShot = guess5;
-                possibleShots.remove(guess5);
-                directionEnum = shotDirectionEnum.left;
-                //firstHit = null;
-            } else if (possibleShots.contains(guess6)) {
-                lastShot = guess6;
-                possibleShots.remove(guess6);
-                directionEnum = shotDirectionEnum.down;
-                //firstHit = null;
-            } else {
-                //seeking = true;
-                directionEnum = shotDirectionEnum.unknown;
-            }
-
+            killShot();
         }
-
         return lastShot;
+    }
+
+    private void killShot() {
+        if (firstHit == null) {
+            firstHit = lastHit;
+        }
+        Position guess = new Position(lastHit.x + 1, lastHit.y);
+        Position guess2 = new Position(lastHit.x - 1, lastHit.y);
+        Position guess3 = new Position(lastHit.x, lastHit.y + 1);
+        Position guess4 = new Position(lastHit.x, lastHit.y - 1);
+        Position guess5 = new Position(firstHit.x - 1, firstHit.y);
+        Position guess6 = new Position(firstHit.x, firstHit.y - 1);
+        if (possibleShots.contains(guess) && directionEnum == shotDirectionEnum.right) {
+            lastShot = guess;
+            possibleShots.remove(guess);
+            directionEnum = shotDirectionEnum.right;
+        } else if (possibleShots.contains(guess2) && directionEnum == shotDirectionEnum.left) {
+            lastShot = guess2;
+            possibleShots.remove(guess2);
+            directionEnum = shotDirectionEnum.left;
+        } else if (possibleShots.contains(guess3) && directionEnum == shotDirectionEnum.up) {
+            lastShot = guess3;
+            possibleShots.remove(guess3);
+            directionEnum = shotDirectionEnum.up;
+        } else if (possibleShots.contains(guess4) && directionEnum == shotDirectionEnum.down) {
+            lastShot = guess4;
+            possibleShots.remove(guess4);
+            directionEnum = shotDirectionEnum.down;
+        } else if (possibleShots.contains(guess)) {
+            lastShot = guess;
+            possibleShots.remove(guess);
+            directionEnum = shotDirectionEnum.right;
+        } else if (possibleShots.contains(guess2)) {
+            lastShot = guess2;
+            possibleShots.remove(guess2);
+            directionEnum = shotDirectionEnum.left;
+        } else if (possibleShots.contains(guess3)) {
+            lastShot = guess3;
+            possibleShots.remove(guess3);
+            directionEnum = shotDirectionEnum.up;
+        } else if (possibleShots.contains(guess4)) {
+            lastShot = guess4;
+            possibleShots.remove(guess4);
+            directionEnum = shotDirectionEnum.down;
+        } else if (possibleShots.contains(guess5)) {
+            lastShot = guess5;
+            possibleShots.remove(guess5);
+            directionEnum = shotDirectionEnum.left;
+            //firstHit = null;
+        } else if (possibleShots.contains(guess6)) {
+            lastShot = guess6;
+            possibleShots.remove(guess6);
+            directionEnum = shotDirectionEnum.down;
+            //firstHit = null;
+        } else {
+            //seeking = true;
+            directionEnum = shotDirectionEnum.unknown;
+        }
     }
 
     /**
