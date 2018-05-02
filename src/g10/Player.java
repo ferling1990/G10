@@ -11,11 +11,10 @@ import java.util.Random;
 public class Player implements BattleshipsPlayer {
 
     private final static Random rnd = new Random();
-    private int sizeX;
-    private int sizeY;
-    private int shipsBeforeShot, shipsAfterShot;
+    private int sizeX, sizeY;
+    private int shipsBeforeShot, shipsAfterShot, duplication;
     private Board myBoard;
-    private boolean seeking, shipDead;
+    private boolean seeking, shipDead, vertical;
     private ArrayList<Position> possibleShots;
     private Position firstHit, lastHit, lastShot;
     private shotDirectionEnum directionEnum;
@@ -44,54 +43,273 @@ public class Player implements BattleshipsPlayer {
      * @param fleet Fleet all the ships that a player should place.
      * @param board Board the board were the ships must be placed.
      */
+//    @Override
+//    public void placeShips(Fleet fleet, Board board) {
+//        myBoard = board;
+//        sizeX = board.sizeX();
+//        sizeY = board.sizeY();
+//        boolean[][] myShips = new boolean[sizeX][sizeY];
+//        for (int i = 0; i < fleet.getNumberOfShips(); ++i) {
+//            Ship s = fleet.getShip(i);
+//            Position pos;
+//            boolean vertical;
+//            do {
+//                vertical = rnd.nextBoolean();
+//                if (vertical) {
+//                    int x = rnd.nextInt(sizeX);
+//                    int y = rnd.nextInt(sizeY - (s.size() - 1));
+//                    pos = new Position(x, y);
+//                } else {
+//                    int x = rnd.nextInt(sizeX - (s.size() - 1));
+//                    int y = rnd.nextInt(sizeY);
+//                    pos = new Position(x, y);
+//                }
+//            } while (collision(pos, s, vertical, myShips));
+//            for (int j = 0; j < s.size(); j++) {
+//                if (vertical) {
+//                    myShips[pos.x][pos.y + j] = true;
+//                } else {
+//                    myShips[pos.x + j][pos.y] = true;
+//                }
+//            }
+//            board.placeShip(pos, s, vertical);
+//        }
+//    }
     @Override
     public void placeShips(Fleet fleet, Board board) {
         myBoard = board;
         sizeX = board.sizeX();
         sizeY = board.sizeY();
+        int x = 0;
+        int y = 0;
+        Random r = new Random();
+        int n = r.nextInt(3);
         boolean[][] myShips = new boolean[sizeX][sizeY];
         for (int i = 0; i < fleet.getNumberOfShips(); ++i) {
             Ship s = fleet.getShip(i);
-            Position pos;
-            boolean vertical;
-            do {
-                vertical = rnd.nextBoolean();
-                if (vertical) {
-                    int x = rnd.nextInt(sizeX);
-                    int y = rnd.nextInt(sizeY - (s.size() - 1));
-                    pos = new Position(x, y);
-                } else {
-                    int x = rnd.nextInt(sizeX - (s.size() - 1));
-                    int y = rnd.nextInt(sizeY);
-                    pos = new Position(x, y);
-                }
-            } while (collision(pos, s, vertical, myShips));
-            for (int j = 0; j < s.size(); j++) {
-                if (vertical) {
-                    myShips[pos.x][pos.y + j] = true;
-                } else {
-                    myShips[pos.x + j][pos.y] = true;
-                }
+
+            if (n == 0) {
+                Position pos = formation0(s);
+                board.placeShip(pos, s, vertical);
             }
-            board.placeShip(pos, s, vertical);
+            if (n == 1) {
+                Position pos = formation90(s);
+                board.placeShip(pos, s, vertical);
+            }
+            if (n == 2) {
+                Position pos = formation180(s);
+                board.placeShip(pos, s, vertical);
+            }
+            if (n == 3) {
+                Position pos = formation270(s);
+                board.placeShip(pos, s, vertical);
+            }
+
         }
     }
 
-    private boolean collision(Position pos, Ship s, boolean vertical, boolean[][] myShips) {
-        for (int i = 0; i < s.size(); i++) {
-            if (vertical) {
-                if (myShips[pos.x][pos.y + i]) {
-                    return true;
-                }
-            } else {
-                if (myShips[pos.x + i][pos.y]) {
-                    return true;
-                }
-            }
+    private Position formation0(Ship s) {
+
+        Position pos;
+        int x;
+        int y;
+        if (s.size() == 2) {                         //size 2 ship
+            x = 0;
+            y = 7;
+            vertical = true;
+            pos = new Position(x, y);
+            return pos;
+
         }
-        return false;
+        if (s.size() == 3 && duplication == 0) { //1st size 3 ship
+            x = 1;
+            y = 4;
+            vertical = true;
+            duplication++;
+            pos = new Position(x, y);
+            return pos;
+        } else if (s.size() == 3 && duplication == 1) { //2nd size 3 ship
+            x = 2;
+            y = 2;
+            vertical = true;
+            duplication--;
+            pos = new Position(x, y);
+            return pos;
+        }
+
+        if (s.size() == 4) {                        //size 4 ship
+            x = 5;
+            y = 2;
+            vertical = false;
+            pos = new Position(x, y);
+            return pos;
+        }
+        if (s.size() == 5) {                        //size 5 ship
+            x = 9;
+            y = 3;
+            vertical = true;
+            pos = new Position(x, y);
+            return pos;
+        }
+
+        return null;
     }
 
+    private Position formation90(Ship s) {
+
+        Position pos;
+        int x;
+        int y;
+
+        if (s.size() == 2) {                         //size 2 ship
+            x = 7;
+            y = 9;
+            vertical = false;
+            pos = new Position(x, y);
+            return pos;
+
+        }
+        if (s.size() == 3 && duplication == 0) { //1st size 3 ship
+            x = 4;
+            y = 8;
+            vertical = false;
+            duplication++;
+            pos = new Position(x, y);
+            return pos;
+        } else if (s.size() == 3 && duplication == 1) { //2nd size 3 ship
+            x = 2;
+            y = 7;
+            vertical = false;
+            duplication--;
+            pos = new Position(x, y);
+            return pos;
+        }
+
+        if (s.size() == 4) {                        //size 4 ship
+            x = 2;
+            y = 1;
+            vertical = true;
+            pos = new Position(x, y);
+            return pos;
+        }
+        if (s.size() == 5) {                        //size 5 ship
+            x = 3;
+            y = 0;
+            vertical = false;
+            pos = new Position(x, y);
+            return pos;
+        }
+        return null;
+    }
+
+    private Position formation180(Ship s) {
+
+        Position pos;
+        int x;
+        int y;
+
+        if (s.size() == 2) {                         //size 2 ship
+            x = 9;
+            y = 1;
+            vertical = true;
+            pos = new Position(x, y);
+            return pos;
+
+        }
+        if (s.size() == 3 && duplication == 0) { //1st size 3 ship
+            x = 8;
+            y = 3;
+            vertical = true;
+            duplication++;
+            pos = new Position(x, y);
+            return pos;
+        } else if (s.size() == 3 && duplication == 1) { //2nd size 3 ship
+            x = 7;
+            y = 5;
+            vertical = true;
+            duplication--;
+            pos = new Position(x, y);
+            return pos;
+        }
+
+        if (s.size() == 4) {                        //size 4 ship
+            x = 1;
+            y = 7;
+            vertical = false;
+            pos = new Position(x, y);
+            return pos;
+        }
+        if (s.size() == 5) {                        //size 5 ship
+            x = 0;
+            y = 2;
+            vertical = true;
+            pos = new Position(x, y);
+            return pos;
+        }
+        return null;
+    }
+
+    private Position formation270(Ship s) {
+
+        Position pos;
+        int x;
+        int y;
+
+        if (s.size() == 2) {                         //size 2 ship
+            x = 1;
+            y = 0;
+            vertical = false;
+            pos = new Position(x, y);
+            return pos;
+
+        }
+        if (s.size() == 3 && duplication == 0) { //1st size 3 ship
+            x = 3;
+            y = 1;
+            vertical = false;
+            duplication++;
+            pos = new Position(x, y);
+            return pos;
+        } else if (s.size() == 3 && duplication == 1) { //2nd size 3 ship
+            x = 5;
+            y = 2;
+            vertical = false;
+            duplication--;
+            pos = new Position(x, y);
+            return pos;
+        }
+
+        if (s.size() == 4) {                        //size 4 ship
+            x = 7;
+            y = 5;
+            vertical = true;
+            pos = new Position(x, y);
+            return pos;
+        }
+        if (s.size() == 5) {                        //size 5 ship
+            x = 3;
+            y = 9;
+            vertical = false;
+            pos = new Position(x, y);
+            return pos;
+        }
+        return null;
+    }
+
+//    private boolean collision(Position pos, Ship s, boolean vertical, boolean[][] myShips) {
+//        for (int i = 0; i < s.size(); i++) {
+//            if (vertical) {
+//                if (myShips[pos.x][pos.y + i]) {
+//                    return true;
+//                }
+//            } else {
+//                if (myShips[pos.x + i][pos.y]) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
     private void createPossibleShotList() {
         for (int y = 0; y < sizeY; y++) {
             for (int x = 0; x < sizeX; x++) {
@@ -130,15 +348,37 @@ public class Player implements BattleshipsPlayer {
             createPossibleShotList();
         }
         if (seeking) {
-            int shot = rnd.nextInt(possibleShots.size());
-            lastShot = possibleShots.get(shot);
-            possibleShots.remove(shot);
-
-            //seekShot();
+            seekShot();
         } else {
             killShot();
         }
         return lastShot;
+    }
+
+    private void seekShot() {
+        for (int i = 0; i < 10; i++) {
+            int shot = rnd.nextInt(possibleShots.size());
+            if (hasNoNeighboors(possibleShots.get(shot))) {
+                lastShot = possibleShots.get(shot);
+                possibleShots.remove(shot);
+                return;
+            } 
+        }
+        randomShot();
+    }
+
+    private void randomShot() {
+        int shot = rnd.nextInt(possibleShots.size());
+        lastShot = possibleShots.get(shot);
+        possibleShots.remove(shot);
+    }
+
+    private boolean hasNoNeighboors(Position pos) {
+        if (possibleShots.contains(pos) && possibleShots.contains(new Position(pos.x + 1, pos.y)) && possibleShots.contains(new Position(pos.x - 1, pos.y))
+                && possibleShots.contains(new Position(pos.x, pos.y + 1)) && possibleShots.contains(new Position(pos.x, pos.y - 1))) {
+            return true;
+        }
+        return false;
     }
 
     private void killShot() {
@@ -154,19 +394,15 @@ public class Player implements BattleshipsPlayer {
         if (possibleShots.contains(guess) && directionEnum == shotDirectionEnum.right) {
             lastShot = guess;
             possibleShots.remove(guess);
-            directionEnum = shotDirectionEnum.right;
         } else if (possibleShots.contains(guess2) && directionEnum == shotDirectionEnum.left) {
             lastShot = guess2;
             possibleShots.remove(guess2);
-            directionEnum = shotDirectionEnum.left;
         } else if (possibleShots.contains(guess3) && directionEnum == shotDirectionEnum.up) {
             lastShot = guess3;
             possibleShots.remove(guess3);
-            directionEnum = shotDirectionEnum.up;
         } else if (possibleShots.contains(guess4) && directionEnum == shotDirectionEnum.down) {
             lastShot = guess4;
             possibleShots.remove(guess4);
-            directionEnum = shotDirectionEnum.down;
         } else if (possibleShots.contains(guess)) {
             lastShot = guess;
             possibleShots.remove(guess);
