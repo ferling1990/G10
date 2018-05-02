@@ -13,8 +13,9 @@ public class Player implements BattleshipsPlayer {
     private final static Random rnd = new Random();
     private int sizeX;
     private int sizeY;
+    private int shipsBeforeShot, shipsAfterShot;
     private Board myBoard;
-    private boolean seeking;
+    private boolean seeking, shipDead;
     private ArrayList<Position> possibleShots;
     private Position firstHit, lastHit, lastShot;
     private shotDirectionEnum directionEnum;
@@ -124,6 +125,7 @@ public class Player implements BattleshipsPlayer {
      */
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
+        shipsBeforeShot = enemyShips.getNumberOfShips();
         if (possibleShots.isEmpty()) {
             createPossibleShotList();
         }
@@ -135,11 +137,32 @@ public class Player implements BattleshipsPlayer {
             //seekShot();
         } else {
             //killShot();
+            if (firstHit == null) {
+                firstHit = lastHit;
+            }
             Position guess = new Position(lastHit.x + 1, lastHit.y);
             Position guess2 = new Position(lastHit.x - 1, lastHit.y);
             Position guess3 = new Position(lastHit.x, lastHit.y + 1);
             Position guess4 = new Position(lastHit.x, lastHit.y - 1);
-            if (possibleShots.contains(guess) || directionEnum == shotDirectionEnum.right) {
+            Position guess5 = new Position(firstHit.x - 1, firstHit.y);
+            Position guess6 = new Position(firstHit.x, firstHit.y - 1);
+            if (possibleShots.contains(guess) && directionEnum == shotDirectionEnum.right) {
+                lastShot = guess;
+                possibleShots.remove(guess);
+                directionEnum = shotDirectionEnum.right;
+            } else if (possibleShots.contains(guess2) && directionEnum == shotDirectionEnum.left) {
+                lastShot = guess2;
+                possibleShots.remove(guess2);
+                directionEnum = shotDirectionEnum.left;
+            } else if (possibleShots.contains(guess3) && directionEnum == shotDirectionEnum.up) {
+                lastShot = guess3;
+                possibleShots.remove(guess3);
+                directionEnum = shotDirectionEnum.up;
+            } else if (possibleShots.contains(guess4) && directionEnum == shotDirectionEnum.down) {
+                lastShot = guess4;
+                possibleShots.remove(guess4);
+                directionEnum = shotDirectionEnum.down;
+            } else if (possibleShots.contains(guess) || directionEnum == shotDirectionEnum.right) {
                 lastShot = guess;
                 possibleShots.remove(guess);
                 directionEnum = shotDirectionEnum.right;
@@ -155,8 +178,18 @@ public class Player implements BattleshipsPlayer {
                 lastShot = guess4;
                 possibleShots.remove(guess4);
                 directionEnum = shotDirectionEnum.down;
+            } else if (possibleShots.contains(guess5)) {
+                lastShot = guess5;
+                possibleShots.remove(guess5);
+                directionEnum = shotDirectionEnum.left;
+                //firstHit = null;
+            } else if (possibleShots.contains(guess6)) {
+                lastShot = guess6;
+                possibleShots.remove(guess6);
+                directionEnum = shotDirectionEnum.down;
+                //firstHit = null;
             } else {
-                seeking = true;
+                //seeking = true;
                 directionEnum = shotDirectionEnum.unknown;
             }
 
@@ -177,11 +210,16 @@ public class Player implements BattleshipsPlayer {
      */
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
-        if (hit) {
+        shipsAfterShot = enemyShips.getNumberOfShips();
+        if (shipsAfterShot < shipsBeforeShot) {
+            seeking = true;
+            firstHit = null;
+            directionEnum = shotDirectionEnum.unknown;
+        } else if (hit) {
             seeking = false;
             lastHit = lastShot;
         } else {
-        directionEnum = shotDirectionEnum.unknown;
+            directionEnum = shotDirectionEnum.unknown;
         }
 
     }
