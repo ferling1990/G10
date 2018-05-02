@@ -344,9 +344,9 @@ public class Player implements BattleshipsPlayer {
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
         shipsBeforeShot = enemyShips.getNumberOfShips();
-//        if (possibleShots.isEmpty()) {
-//            createPossibleShotList();
-//        }
+        if (possibleShots.isEmpty()) {
+            createPossibleShotList();
+        }
         if (seeking) {
             seekShot();
         } else {
@@ -489,7 +489,8 @@ public class Player implements BattleshipsPlayer {
      */
     @Override
     public void startMatch(int rounds, Fleet ships, int sizeX, int sizeY) {
-
+        possibleShots.clear();
+        createPossibleShotList();
     }
 
     /**
