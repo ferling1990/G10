@@ -15,7 +15,7 @@ public class Player implements BattleshipsPlayer {
     private int shipsBeforeShot, shipsAfterShot, duplication;
     private Board myBoard;
     private boolean seeking, shipDead, vertical;
-    private ArrayList<Position> possibleShots;
+    private ArrayList<Position> possibleShots, stackOfShots;
     private Position firstHit, lastHit, lastShot;
     private shotDirectionEnum directionEnum;
 
